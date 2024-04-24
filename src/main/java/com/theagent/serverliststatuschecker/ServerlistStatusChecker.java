@@ -19,5 +19,6 @@ public class ServerlistStatusChecker {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        logger.info("ServerlistStatusChecker has been initialized");
     }
 }
