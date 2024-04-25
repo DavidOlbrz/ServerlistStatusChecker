@@ -1,14 +1,14 @@
 package com.theagent.serverliststatuschecker;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.slf4j.Logger;
 
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 @Plugin(
         id = "serverliststatuschecker",
@@ -34,16 +34,23 @@ public class ServerlistStatusChecker {
         pinger = new ServerPinger(server, logger);
 
         logger.info("ServerlistStatusChecker has been initialized");
+
+        server.getScheduler()
+                .buildTask(this, () -> {
+                    logger.debug("Automatic ping");
+                    try {
+                        pinger.pingServers();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .repeat(1L, TimeUnit.MINUTES)
+                .schedule();
     }
 
     @Subscribe
     public void onServerPing(ProxyPingEvent event) {
-        logger.debug("Server was pinged!"); // TODO Remove before first production build
-        try {
-            pinger.pingServers();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        // TODO Update server list item with current server status
     }
 
 }
