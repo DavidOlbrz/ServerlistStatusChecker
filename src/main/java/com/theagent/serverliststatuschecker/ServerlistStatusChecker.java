@@ -1,6 +1,7 @@
 package com.theagent.serverliststatuschecker;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
@@ -8,12 +9,13 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.slf4j.Logger;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @Plugin(
         id = "serverliststatuschecker",
         name = "ServerlistStatusChecker",
-        version = "1.0-SNAPSHOT",
+        version = "1.0",
         authors = {"_The_Agent_"}
 )
 public class ServerlistStatusChecker {
@@ -22,6 +24,7 @@ public class ServerlistStatusChecker {
     private final Logger logger;
 
     private ServerPinger pinger;
+    private HashMap<String, Boolean> serverStatus;
 
     @Inject
     public ServerlistStatusChecker(ProxyServer server, Logger logger) {
@@ -29,17 +32,22 @@ public class ServerlistStatusChecker {
         this.logger = logger;
     }
 
+    /**
+     * Triggers, when the proxy finished initialization
+     *
+     * @param event ProxyInitializeEvent
+     */
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         pinger = new ServerPinger(server, logger);
 
         logger.info("ServerlistStatusChecker has been initialized");
 
+        // adds the automatic server ping as a scheduled task
         server.getScheduler()
                 .buildTask(this, () -> {
-                    logger.debug("Automatic ping");
                     try {
-                        pinger.pingServers();
+                        serverStatus = pinger.pingServers();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -48,9 +56,15 @@ public class ServerlistStatusChecker {
                 .schedule();
     }
 
-    @Subscribe
+
+    /**
+     * Triggers, when a player reloads the server list
+     *
+     * @param event ProxyPingEvent
+     */
+    @Subscribe(order = PostOrder.NORMAL)
     public void onServerPing(ProxyPingEvent event) {
-        // TODO Update server list item with current server status
+        StatusDisplay.updateServerListEntry(event, serverStatus);
     }
 
 }

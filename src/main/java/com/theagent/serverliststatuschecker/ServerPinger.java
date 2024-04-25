@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 public class ServerPinger {
@@ -22,25 +21,24 @@ public class ServerPinger {
     /**
      * Pings all configured Servers and saves their online statuses
      *
+     * @return map of all servers and their online statuses
      * @throws InterruptedException Operation was not completed successfully
      */
-    protected void pingServers() throws InterruptedException {
-        HashMap<String, Boolean> pingResults = new HashMap<>();
+    protected HashMap<String, Boolean> pingServers() throws InterruptedException {
+        HashMap<String, Boolean> pingResults = new HashMap<>(); // the server statuses will be saved here
 
+        // iterate through all configured servers and get their online status
         for (RegisteredServer server : allServers) {
             boolean status = false;
             try {
                 status = server.ping().get() != null;
             } catch (ExecutionException e) {
-                logger.warn(String.format("Server %s appears to be offline", server.getServerInfo().getName()));
+                //logger.warn(String.format("Server %s appears to be offline", server.getServerInfo().getName()));
             }
-            pingResults.put(server.getServerInfo().getName(), status);
+            pingResults.put(server.getServerInfo().getName(), status); // add status of server
         }
 
-        Set<String> keys = pingResults.keySet();
-        for (String key : keys) {
-            System.out.println(key + ": " + pingResults.get(key));
-        }
+        return pingResults;
     }
 
 }
