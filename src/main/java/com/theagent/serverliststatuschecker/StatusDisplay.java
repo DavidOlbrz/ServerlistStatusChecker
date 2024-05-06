@@ -24,11 +24,14 @@ public class StatusDisplay {
         Object[] serverNames = serverStatus.keySet().toArray(); // save all map keys into an array
 
         // create new SamplePlayer array, which will hold the server list and their statuses
-        ServerPing.SamplePlayer[] statusList = new ServerPing.SamplePlayer[serverCount];
+        ServerPing.SamplePlayer[] statusList = new ServerPing.SamplePlayer[serverCount + 1];
+
+        // add a header to the top of the list
+        statusList[0] = new ServerPing.SamplePlayer("§f§nStatus:", UUID.randomUUID());
 
         // iterate through all servers and build the server status list
         for (int i = 0; i < serverCount; i++) {
-            statusList[i] = new ServerPing.SamplePlayer((serverStatus.get(serverNames[i].toString()) ? ONLINE : OFFLINE) + serverNames[i].toString(), UUID.randomUUID());
+            statusList[i + 1] = new ServerPing.SamplePlayer((serverStatus.get(serverNames[i].toString()) ? ONLINE : OFFLINE) + serverNames[i].toString(), UUID.randomUUID());
         }
 
         ping.samplePlayers(statusList); // add the list to the ping builder
