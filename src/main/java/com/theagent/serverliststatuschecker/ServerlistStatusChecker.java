@@ -1,7 +1,6 @@
 package com.theagent.serverliststatuschecker;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyPingEvent;
@@ -62,7 +61,7 @@ public class ServerlistStatusChecker {
      *
      * @param event ProxyPingEvent
      */
-    @Subscribe(order = PostOrder.NORMAL)
+    @Subscribe()
     public void onServerPing(ProxyPingEvent event) {
         StatusDisplay.updateServerListEntry(event, serverStatus);
     }
