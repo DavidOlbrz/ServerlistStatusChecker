@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 @Plugin(
         id = "serverliststatuschecker",
         name = "ServerlistStatusChecker",
-        version = "1.0",
+        version = "1.1",
         authors = {"_The_Agent_"}
 )
 public class ServerlistStatusChecker {
