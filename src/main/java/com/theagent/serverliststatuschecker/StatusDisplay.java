@@ -8,8 +8,8 @@ import java.util.UUID;
 
 public class StatusDisplay {
 
-    private static final String ONLINE = "§a[x] ";
-    private static final String OFFLINE = "§c[-] ";
+    private static final String ONLINE = "§a☑ ";
+    private static final String OFFLINE = "§c☒ ";
 
     /**
      * Updates the server list entry for the player
